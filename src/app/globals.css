@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+  --accent: #a855f7;
+  --accent-bright: #c084fc;
+  --accent-glow: rgba(168, 85, 247, 0.55);
+  /* Reading text — bright enough to feel inviting on pure black, not the old flat gray. */
+  --text-body: #cdd2de;
+  /* Small meta / labels only. */
+  --muted: #9aa1b2;
+  --surface: #0a0a0a;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --font-heading: var(--font-tektur);
+  --font-body: var(--font-jetbrains);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-bright: var(--accent-bright);
+  --color-text-body: var(--text-body);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+}
+
+* {
+  border-color: var(--border-color);
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Keep anchored sections clear of the fixed navbar when jumping via #links. */
+  scroll-padding-top: 6rem;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), monospace;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.text-glow {
+  text-shadow: 0 0 24px var(--accent-glow);
+}
+
+.hover-purple {
+  transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 150ms ease;
+}
+
+.hover-purple:hover,
+.hover-purple:focus-visible,
+.hover-purple[data-active="true"] {
+  color: #ffffff;
+  border-color: var(--accent);
+  background-color: var(--accent);
+  box-shadow: 0 0 20px 2px var(--accent-glow);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: transparent;
+  transition: all 220ms ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 28px 4px var(--accent-glow);
+  transform: translateY(-2px);
+}
+
+.section-pad {
+  padding-top: clamp(4rem, 10vw, 7rem);
+  padding-bottom: clamp(4rem, 10vw, 7rem);
+}
+
+/* ---- Readable rich text --------------------------------------------------
+   Rendered by <RichText>. Body copy is bright and airy; important words are
+   picked out via **accent** and *bright* markup so descriptions stop reading
+   as one flat wall of gray. The per-project accent flows in through
+   --rich-accent (set inline), so highlights match each project's colour. */
+.rich {
+  color: var(--text-body);
+  line-height: 1.75;
+  --rich-accent: var(--accent-bright);
+}
+
+.rich p {
+  text-wrap: pretty;
+}
+
+.rich p + p {
+  margin-top: 1.15em;
+}
+
+.rich .hl {
+  color: var(--rich-accent);
+  font-weight: 600;
+  text-shadow: 0 0 16px color-mix(in srgb, var(--rich-accent) 45%, transparent);
+}
+
+.rich .hl-bright {
+  color: #ffffff;
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Chips used for project meta (theme / colours) on detail pages. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--chip-accent, var(--accent)) 45%, transparent);
+  background: color-mix(in srgb, var(--chip-accent, var(--accent)) 12%, transparent);
+  padding: 0.3rem 0.75rem;
+  font-family: var(--font-body), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: #f2ecff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-pulse-slow,
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 24s linear infinite;
+}

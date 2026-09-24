@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectCategory {
+  MAIN
+  OTHER
+  UPCOMING
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum MediaPlacement {
+  PREVIEW
+  GALLERY
+}
+
+model SiteSettings {
+  id              String  @id @default("singleton")
+  heroTitle       String  @default("")
+  heroSubtitle    String  @default("")
+  heroCtaLabel    String  @default("")
+  contactIntro    String  @default("")
+  contactEmail    String  @default("")
+  contactPhone    String  @default("")
+  seoTitle        String  @default("")
+  seoDescription  String  @default("")
+  ogImageUrl      String  @default("")
+  updatedAt       DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String
+  url       String
+  iconKey   String
+  order     Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id               String          @id @default(cuid())
+  slug             String          @unique
+  title            String
+  subtitle         String          @default("")
+  category         ProjectCategory @default(MAIN)
+  order            Int             @default(0)
+  eventDate        String          @default("")
+  location         String          @default("")
+  accentColor      String          @default("#a855f7")
+  summary          String          @default("")
+  fullDescription  String          @default("")
+  posterImageUrl   String          @default("")
+  fullVideoUrl     String          @default("")
+  published        Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  sections         ProjectSection[]
+  media            MediaItem[]
+}
+
+model ProjectSection {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  subtitle    String   @default("")
+  colors      String   @default("")
+  theme       String   @default("")
+  content     String   @default("")
+  videoUrl    String   @default("")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MediaItem {
+  id        String         @id @default(cuid())
+  projectId String
+  project   Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type      MediaType
+  placement MediaPlacement @default(PREVIEW)
+  url       String
+  caption   String         @default("")
+  order     Int            @default(0)
+  createdAt DateTime       @default(now())
+}
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @default("")
+  email     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
