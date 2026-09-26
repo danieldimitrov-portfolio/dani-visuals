@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import ProjectSection from "@/components/ProjectSection";
+import Ambient from "@/components/Ambient";
+import WorkSection from "@/components/WorkSection";
+import Approach from "@/components/Approach";
 import OtherProjectsSection from "@/components/OtherProjectsSection";
 import UpcomingSection from "@/components/UpcomingSection";
 import ContactSection from "@/components/ContactSection";
@@ -20,10 +22,17 @@ export default async function Home() {
   const upcomingProject = projects.find((p) => p.category === "UPCOMING");
 
   const navItems = buildNavItems(projects);
-  const ctaHref = mainProjects[0] ? `#${mainProjects[0].slug}` : "#contact";
+  const ctaHref = mainProjects.length > 0 ? "#work" : "#contact";
+  const marquee = [
+    ...mainProjects.map((project) => project.title),
+    "Live visuals",
+    "3D worlds",
+    "Stage design",
+  ];
 
   return (
     <>
+      <Ambient />
       <Navbar brand={settings.heroTitle} items={navItems} />
       <main className="flex-1">
         <Hero
@@ -31,11 +40,12 @@ export default async function Home() {
           subtitle={settings.heroSubtitle}
           ctaLabel={settings.heroCtaLabel}
           ctaHref={ctaHref}
+          marquee={marquee}
         />
 
-        {mainProjects.map((project) => (
-          <ProjectSection key={project.id} project={project} />
-        ))}
+        {mainProjects.length > 0 && <WorkSection projects={mainProjects} />}
+
+        <Approach />
 
         {otherProjects.length > 0 && <OtherProjectsSection projects={otherProjects} />}
 

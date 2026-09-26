@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
-export default auth((req) => {
+export const proxy = auth((req) => {
   const { pathname } = req.nextUrl;
-  const isLoggedIn = !!req.auth;
+  const isLoggedIn = Boolean(req.auth);
   const isLoginPage = pathname === "/admin900/login";
 
   if (pathname.startsWith("/admin900") && !isLoginPage && !isLoggedIn) {

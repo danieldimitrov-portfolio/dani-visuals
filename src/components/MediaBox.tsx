@@ -8,13 +8,11 @@ export default function MediaBox({
   type,
   url,
   caption,
-  accentColor = "#a855f7",
   priority = false,
 }: {
   type: MediaType;
   url: string;
   caption?: string;
-  accentColor?: string;
   priority?: boolean;
 }) {
   const isVideo = type === "VIDEO";
@@ -41,16 +39,10 @@ export default function MediaBox({
           />
         )
       ) : (
-        <div
-          className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-white/5 to-transparent text-muted"
-          style={{ boxShadow: `inset 0 0 80px ${accentColor}22` }}
-        >
+        <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-violet-600/15 to-transparent text-violet-soft shadow-[inset_0_0_80px_rgba(168,85,247,0.15)]">
           {isVideo ? (
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-full border"
-              style={{ borderColor: accentColor }}
-            >
-              <Play size={22} className="ml-1" style={{ color: accentColor }} />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-violet-soft/60">
+              <Play size={22} className="ml-1 text-violet-soft" />
             </div>
           ) : (
             <ImageOff size={28} />

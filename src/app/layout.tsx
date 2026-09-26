@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
-import { Tektur, JetBrains_Mono } from "next/font/google";
+import { Unbounded, Manrope, JetBrains_Mono } from "next/font/google";
 import { getSiteSettings } from "@/lib/data";
 import "./globals.css";
 
-const tektur = Tektur({
-  variable: "--font-tektur",
-  subsets: ["latin"],
-  weight: ["700", "800", "900"],
+// All three carry Cyrillic — the site is Bulgarian-first.
+const unbounded = Unbounded({
+  variable: "--font-unbounded",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "600", "800"],
+});
+
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "700"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains",
-  subsets: ["latin", "cyrillic", "cyrillic-ext"],
-  weight: ["400", "500", "700"],
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500"],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -40,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: settings.seoDescription,
       url: siteUrl,
       siteName: settings.heroTitle,
-      images: settings.ogImageUrl ? [{ url: settings.ogImageUrl, width: 1280, height: 720 }] : [],
+      images: [{ url: settings.ogImageUrl || "/og.jpg", width: 1200, height: 630 }],
       locale: "bg_BG",
       type: "website",
     },
@@ -48,7 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: settings.seoTitle,
       description: settings.seoDescription,
-      images: settings.ogImageUrl ? [settings.ogImageUrl] : [],
+      images: [settings.ogImageUrl || "/og.jpg"],
     },
     robots: {
       index: true,
@@ -61,9 +68,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="bg"
-      className={`${tektur.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${unbounded.variable} ${manrope.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-black text-white selection:bg-accent">
+      <body className="min-h-full flex flex-col bg-black text-white">
         {children}
       </body>
     </html>

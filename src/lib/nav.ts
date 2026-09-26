@@ -7,24 +7,22 @@ export type NavItem = {
 };
 
 /**
- * Build the navigation straight from the projects that actually render on the
- * page, so the menu can never drift out of sync with the content. Each main
- * project becomes an anchor to its own section (id = slug); the gallery,
- * upcoming and contact blocks get stable ids. The Navbar turns these ids into
- * in-page (#id) or cross-page (/#id) links depending on the current route.
+ * Section-level navigation, built from what actually renders so the menu can
+ * never point at a section that isn't there. Individual projects live in the
+ * work index (and on their own pages), not in the top bar. The Navbar turns
+ * these ids into in-page (#id) or cross-page (/#id) links.
  */
 export function buildNavItems(projects: ProjectData[]): NavItem[] {
-  const main = projects
-    .filter((p) => p.category === "MAIN")
-    .sort((a, b) => a.order - b.order);
+  const hasMain = projects.some((p) => p.category === "MAIN");
   const hasOther = projects.some((p) => p.category === "OTHER");
   const hasUpcoming = projects.some((p) => p.category === "UPCOMING");
 
-  const items: NavItem[] = [{ id: "home", label: "Начало" }];
-  main.forEach((p) => items.push({ id: p.slug, label: p.title }));
-  if (hasOther) items.push({ id: "other-projects", label: "Други проекти" });
+  const items: NavItem[] = [];
+  if (hasMain) items.push({ id: "work", label: "Проекти" });
+  items.push({ id: "approach", label: "Подход" });
+  if (hasOther) items.push({ id: "other-projects", label: "Архив" });
   if (hasUpcoming) items.push({ id: "upcoming", label: "Предстоящо" });
-  items.push({ id: "contact", label: "Контакти" });
+  items.push({ id: "contact", label: "Контакт" });
 
   return items;
 }

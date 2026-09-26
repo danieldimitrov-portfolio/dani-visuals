@@ -1,19 +1,41 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   DANI — light on black.
+   Two text colours only: WHITE (primary) and VIOLET (secondary). Every glow,
+   beam and highlight lives in the same violet family, so the page reads as
+   one lighting rig instead of a rainbow of accents.
+   ========================================================================== */
+
 :root {
   --background: #000000;
   --foreground: #ffffff;
-  --accent: #a855f7;
-  --accent-bright: #c084fc;
-  --accent-glow: rgba(168, 85, 247, 0.55);
-  /* Reading text — bright enough to feel inviting on pure black, not the old flat gray. */
-  --text-body: #cdd2de;
-  /* Small meta / labels only. */
-  --muted: #9aa1b2;
-  --surface: #0a0a0a;
+
+  /* Violet scale */
+  --violet-100: #f1e8ff;
+  --violet-300: #d8b4fe;
+  --violet-soft: #c4a1ff; /* secondary TEXT colour — 9.6:1 on black */
+  --violet: #a855f7; /* the neon */
+  --violet-600: #7c3aed;
+  --violet-deep: #3b1373;
+  --violet-glow: rgba(168, 85, 247, 0.55);
+
+  /* Reading copy — white with a breath of violet, never gray. */
+  --text-body: #e9e4f5;
+
+  /* Legacy tokens (admin panel) mapped into the violet family. */
+  --accent: var(--violet);
+  --accent-bright: var(--violet-soft);
+  --accent-glow: var(--violet-glow);
+  --muted: #aaa1c0;
+  --surface: #07050c;
   --border-color: rgba(255, 255, 255, 0.1);
-  --font-heading: var(--font-tektur);
-  --font-body: var(--font-jetbrains);
+
+  --font-heading: var(--font-unbounded);
+  --font-body: var(--font-manrope);
+  --font-mono: var(--font-jetbrains);
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 @theme inline {
@@ -21,162 +43,553 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-accent-bright: var(--accent-bright);
+  --color-violet-soft: var(--violet-soft);
+  --color-violet-glow: var(--violet);
   --color-text-body: var(--text-body);
   --color-muted: var(--muted);
   --color-surface: var(--surface);
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
 }
 
-* {
-  border-color: var(--border-color);
-}
+/* ---------- Base ---------------------------------------------------------- */
+@layer base {
+  * {
+    border-color: var(--border-color);
+  }
 
-html {
-  scroll-behavior: smooth;
-  /* Keep anchored sections clear of the fixed navbar when jumping via #links. */
-  scroll-padding-top: 6rem;
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body), monospace;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading), sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.01em;
-}
-
-::selection {
-  background: var(--accent);
-  color: #ffffff;
-}
-
-.text-glow {
-  text-shadow: 0 0 24px var(--accent-glow);
-}
-
-.hover-purple {
-  transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 150ms ease;
-}
-
-.hover-purple:hover,
-.hover-purple:focus-visible,
-.hover-purple[data-active="true"] {
-  color: #ffffff;
-  border-color: var(--accent);
-  background-color: var(--accent);
-  box-shadow: 0 0 20px 2px var(--accent-glow);
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.9rem 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 999px;
-  font-family: var(--font-heading), sans-serif;
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #ffffff;
-  background: transparent;
-  transition: all 220ms ease;
-}
-
-.btn-primary:hover,
-.btn-primary:focus-visible {
-  border-color: var(--accent);
-  background: var(--accent);
-  box-shadow: 0 0 28px 4px var(--accent-glow);
-  transform: translateY(-2px);
-}
-
-.section-pad {
-  padding-top: clamp(4rem, 10vw, 7rem);
-  padding-bottom: clamp(4rem, 10vw, 7rem);
-}
-
-/* ---- Readable rich text --------------------------------------------------
-   Rendered by <RichText>. Body copy is bright and airy; important words are
-   picked out via **accent** and *bright* markup so descriptions stop reading
-   as one flat wall of gray. The per-project accent flows in through
-   --rich-accent (set inline), so highlights match each project's colour. */
-.rich {
-  color: var(--text-body);
-  line-height: 1.75;
-  --rich-accent: var(--accent-bright);
-}
-
-.rich p {
-  text-wrap: pretty;
-}
-
-.rich p + p {
-  margin-top: 1.15em;
-}
-
-.rich .hl {
-  color: var(--rich-accent);
-  font-weight: 600;
-  text-shadow: 0 0 16px color-mix(in srgb, var(--rich-accent) 45%, transparent);
-}
-
-.rich .hl-bright {
-  color: #ffffff;
-  font-weight: 600;
-  font-style: normal;
-}
-
-/* Chips used for project meta (theme / colours) on detail pages. */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--chip-accent, var(--accent)) 45%, transparent);
-  background: color-mix(in srgb, var(--chip-accent, var(--accent)) 12%, transparent);
-  padding: 0.3rem 0.75rem;
-  font-family: var(--font-body), monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  color: #f2ecff;
-}
-
-@media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
+    /* Anchored sections clear the fixed navbar. */
+    scroll-padding-top: 5.5rem;
+    background: var(--background);
   }
-  .animate-pulse-slow,
-  .animate-marquee {
-    animation: none;
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-size: 1rem;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading), sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--violet);
+    color: #ffffff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--violet-300);
+    outline-offset: 3px;
   }
 }
 
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
+/* ---------- Components ---------------------------------------------------- */
+@layer components {
+  /* Small mono caption — the secondary (violet) voice of the page. */
+  .label {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--violet-soft);
+  }
+
+  .shell {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 88rem;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .section-pad {
+    padding-top: clamp(5rem, 12vw, 9rem);
+    padding-bottom: clamp(5rem, 12vw, 9rem);
+  }
+
+  /* Hairline that glows in the middle, like light caught on an edge. */
+  .glow-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(196, 161, 255, 0.55), transparent);
+  }
+
+  /* Neon tube text. */
+  .neon {
+    color: #ffffff;
+    text-shadow:
+      0 0 1px #ffffff,
+      0 0 14px rgba(216, 180, 254, 0.85),
+      0 0 40px rgba(168, 85, 247, 0.75),
+      0 0 110px rgba(124, 58, 237, 0.55);
+  }
+
+  .outline-text {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(196, 161, 255, 0.4);
+  }
+
+  /* ---- Buttons ---- */
+  .btn-light,
+  .btn-ghost,
+  .btn-primary {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    border-radius: 999px;
+    padding: 0.85rem 1.6rem;
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition:
+      background-color 250ms var(--ease-out),
+      color 250ms var(--ease-out),
+      border-color 250ms var(--ease-out),
+      box-shadow 350ms var(--ease-out),
+      transform 250ms var(--ease-out);
+  }
+
+  .btn-light {
+    background: #ffffff;
+    color: #0a0612;
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+  }
+  .btn-light:hover,
+  .btn-light:focus-visible {
+    background: var(--violet-100);
+    box-shadow:
+      0 0 24px rgba(216, 180, 254, 0.6),
+      0 0 70px rgba(168, 85, 247, 0.55);
+    transform: translateY(-2px);
+  }
+
+  .btn-ghost,
+  .btn-primary {
+    border: 1px solid rgba(196, 161, 255, 0.45);
+    background: rgba(168, 85, 247, 0.06);
+    color: #ffffff;
+  }
+  .btn-ghost:hover,
+  .btn-ghost:focus-visible,
+  .btn-primary:hover,
+  .btn-primary:focus-visible {
+    border-color: var(--violet-300);
+    background: rgba(168, 85, 247, 0.22);
+    box-shadow:
+      0 0 22px rgba(168, 85, 247, 0.5),
+      inset 0 0 18px rgba(216, 180, 254, 0.18);
+    transform: translateY(-2px);
+  }
+
+  /* Legacy hover used across the admin panel. */
+  .hover-purple {
+    transition:
+      color 200ms ease,
+      background-color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+  .hover-purple:hover,
+  .hover-purple:focus-visible,
+  .hover-purple[data-active="true"] {
+    color: #ffffff;
+    border-color: var(--violet);
+    background-color: rgba(168, 85, 247, 0.25);
+    box-shadow: 0 0 20px 2px var(--violet-glow);
+  }
+
+  /* Nav / inline links: a light line switches on underneath. */
+  .nav-link {
+    position: relative;
+    color: rgba(255, 255, 255, 0.72);
+    transition: color 200ms ease;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--violet-300), transparent);
+    box-shadow: 0 0 10px var(--violet);
+    transform: scaleX(0);
+    transition: transform 350ms var(--ease-out);
+  }
+  .nav-link:hover,
+  .nav-link:focus-visible,
+  .nav-link[data-active="true"] {
+    color: #ffffff;
+  }
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after,
+  .nav-link[data-active="true"]::after {
+    transform: scaleX(1);
+  }
+
+  /* Pulsing "on air" light. */
+  .live-dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: none;
+    border-radius: 999px;
+    background: var(--violet-300);
+    box-shadow: 0 0 12px var(--violet);
+    animation: live-pulse 2.2s ease-out infinite;
+  }
+
+  /* ---- Rich text (RichText component) ---- */
+  .rich {
+    color: var(--text-body);
+    line-height: 1.75;
+  }
+  .rich p {
+    text-wrap: pretty;
+  }
+  .rich p + p {
+    margin-top: 1.1em;
+  }
+  .rich .hl {
+    color: var(--violet-soft);
+    font-weight: 700;
+    text-shadow: 0 0 18px rgba(168, 85, 247, 0.55);
+  }
+  .rich .hl-bright {
+    color: #ffffff;
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  /* Meta chips (theme / colours) on project pages. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    border: 1px solid rgba(196, 161, 255, 0.35);
+    background: rgba(168, 85, 247, 0.1);
+    padding: 0.35rem 0.8rem;
+    font-family: var(--font-mono), monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--violet-100);
+  }
+
+  /* Contact form fields — underline style, light up on focus. */
+  .field {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 0;
+    background: transparent;
+    padding: 0.85rem 0;
+    font-size: 1rem;
+    color: #ffffff;
+    transition:
+      border-color 200ms ease,
+      box-shadow 300ms var(--ease-out);
+  }
+  .field::placeholder {
+    color: rgba(233, 228, 245, 0.35);
+  }
+  .field:focus,
+  .field:focus-visible {
+    outline: none;
+    border-bottom-color: var(--violet-300);
+    box-shadow:
+      0 1px 0 0 var(--violet-300),
+      0 14px 24px -18px rgba(168, 85, 247, 0.95);
+  }
+
+  /* ---- Light sweep on hover (cards, rows) ---- */
+  .sweep {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .sweep::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: linear-gradient(
+      105deg,
+      transparent 35%,
+      rgba(216, 180, 254, 0.14) 45%,
+      rgba(255, 255, 255, 0.22) 50%,
+      rgba(216, 180, 254, 0.14) 55%,
+      transparent 65%
+    );
+    mix-blend-mode: screen;
+    translate: -110% 0;
+    transition: translate 1100ms var(--ease-out);
+  }
+  .sweep:hover::after,
+  .sweep:focus-visible::after,
+  .group:hover .sweep::after {
+    translate: 110% 0;
+  }
+
+  /* ======================================================================
+     Stage lighting — rendered by <LightScene>. Beams are conic-gradient
+     cones pivoting on their fixture; only `rotate` animates, so it stays on
+     the compositor.
+     ====================================================================== */
+  .scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% -10%, rgba(124, 58, 237, 0.42), transparent 70%),
+      radial-gradient(ellipse 70% 35% at 50% 108%, rgba(168, 85, 247, 0.38), transparent 70%),
+      #030106;
+  }
+  .scene[data-variant="overlay"] {
+    background: none;
+  }
+
+  .beam {
+    position: absolute;
+    top: -4%;
+    left: var(--x);
+    width: 260%;
+    height: 170%;
+    translate: -50% 0;
+    transform-origin: 50% 0;
+    rotate: var(--from);
+    background:
+      conic-gradient(
+        from calc(180deg - 1.2deg) at 50% 0%,
+        transparent 0deg,
+        rgba(255, 255, 255, calc(var(--s) * 0.9)) 1.2deg,
+        transparent 2.4deg
+      ),
+      conic-gradient(
+        from calc(180deg - var(--w) / 2) at 50% 0%,
+        transparent 0deg,
+        rgba(196, 161, 255, var(--s)) calc(var(--w) / 2),
+        transparent var(--w)
+      );
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.55) 40%, transparent 78%);
+    mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.55) 40%, transparent 78%);
+    mix-blend-mode: screen;
+    animation: beam-sway var(--d) ease-in-out var(--delay) infinite alternate;
+    will-change: rotate;
+  }
+
+  .fixture {
+    position: absolute;
+    top: -4%;
+    left: var(--x);
+    width: 3rem;
+    height: 3rem;
+    translate: -50% -50%;
+    border-radius: 999px;
+    background: radial-gradient(
+      circle,
+      #ffffff 0 3px,
+      rgba(216, 180, 254, 0.95) 5px,
+      rgba(168, 85, 247, 0.35) 12px,
+      transparent 24px
+    );
+    mix-blend-mode: screen;
+  }
+
+  /* Cursor-following light (see <Ambient>). */
+  .spotlight {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    opacity: 0;
+    background: radial-gradient(
+      560px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(168, 85, 247, 0.14),
+      transparent 65%
+    );
+    mix-blend-mode: screen;
+    transition: opacity 600ms ease;
+  }
+  .spotlight[data-on="true"] {
+    opacity: 1;
+  }
+
+  /* Film grain — keeps big black areas from looking flat/digital. */
+  .grain {
+    pointer-events: none;
+    position: fixed;
+    inset: -50%;
+    z-index: 45;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    animation: grain 900ms steps(4) infinite;
+  }
+
+  /* Endless ticker. Content is rendered twice; -50% loops seamlessly. */
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 45s linear infinite;
+  }
+}
+
+/* Real utility so it works with variants (hover:, group-hover:). */
+@utility text-glow {
+  text-shadow: 0 0 28px var(--violet-glow);
+}
+
+/* ---------- Keyframes ----------------------------------------------------- */
+@keyframes beam-sway {
+  from {
+    rotate: var(--from);
+  }
+  to {
+    rotate: var(--to);
+  }
+}
+
+@keyframes live-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(168, 85, 247, 0.6),
+      0 0 12px var(--violet);
+  }
+  100% {
+    box-shadow:
+      0 0 0 12px rgba(168, 85, 247, 0),
+      0 0 12px var(--violet);
+  }
+}
+
+@keyframes neon-on {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  9% {
+    opacity: 0.15;
+  }
+  13% {
+    opacity: 1;
+  }
+  17% {
+    opacity: 0.35;
+  }
+  21%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes grain {
+  0% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -4% 3%;
+  }
+  50% {
+    translate: 3% -5%;
+  }
+  75% {
+    translate: -2% 4%;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 36px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 
 @keyframes pulse-slow {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .animate-pulse-slow {
   animation: pulse-slow 3s ease-in-out infinite;
 }
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+.neon-on {
+  animation: neon-on 1.8s linear 0.2s both;
 }
 
-.animate-marquee {
-  animation: marquee 24s linear infinite;
+/* Scroll-driven reveal — progressive enhancement, zero JS. Browsers without
+   scroll timelines simply show the content. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .beam,
+  .grain,
+  .marquee,
+  .live-dot,
+  .neon-on,
+  .animate-pulse-slow {
+    animation: none !important;
+  }
+  .sweep::after {
+    display: none;
+  }
 }

@@ -1,4 +1,8 @@
-import { ArrowDown } from "lucide-react";
+import Image from "next/image";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
+import heroStage from "../../public/hero-stage.jpg";
+import LightScene from "./LightScene";
+import Marquee from "./Marquee";
 import RichText from "./RichText";
 
 export default function Hero({
@@ -6,46 +10,63 @@ export default function Hero({
   subtitle,
   ctaLabel,
   ctaHref,
+  marquee,
 }: {
   title: string;
   subtitle: string;
   ctaLabel: string;
   ctaHref: string;
+  marquee: string[];
 }) {
   return (
-    <section
-      id="home"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-5"
-    >
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/3 h-[36rem] w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/25 blur-[140px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:64px_64px]" />
-      </div>
+    <section id="home" className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden">
+      {/* The stage — live photo, graded into the violet rig. */}
+      <Image
+        src={heroStage}
+        alt="Визуализации на живо на сцената в Ефенар — Balkan Madness"
+        fill
+        preload
+        placeholder="blur"
+        sizes="100vw"
+        className="-z-30 object-cover object-[48%_35%]"
+      />
+      <div aria-hidden className="absolute inset-0 -z-20 bg-[#5b21b6] opacity-45 mix-blend-color" />
+      <LightScene seed="hero-rig" variant="overlay" intensity={0.85} className="-z-20" />
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-[linear-gradient(to_top,#000_0%,rgba(0,0,0,0.88)_24%,rgba(0,0,0,0.2)_58%,rgba(0,0,0,0.6)_100%)]"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(0,0,0,0.65)_0%,transparent_60%)]"
+      />
 
-      <div className="relative z-10 flex max-w-4xl flex-col items-center text-center">
-        <p className="mb-4 font-body text-xs uppercase tracking-[0.4em] text-accent-bright">
-          VJ Portfolio
+      <div className="shell relative pb-10 pt-32 md:pb-14">
+        <p className="label flex items-center gap-3">
+          <span className="live-dot" />
+          VJ · Visual artist · Live visuals
         </p>
-        <h1 className="text-glow text-6xl leading-[0.95] text-white sm:text-7xl md:text-8xl">
+
+        <h1 className="neon neon-on mt-6 text-[clamp(5.5rem,23vw,20rem)] leading-[0.8] tracking-[-0.06em]">
           {title}
         </h1>
-        <RichText
-          text={subtitle}
-          className="mt-6 max-w-2xl text-center font-body text-base leading-relaxed sm:text-lg"
-        />
-        <a href={ctaHref} className="btn-primary mt-10">
-          {ctaLabel}
-          <ArrowDown size={16} />
-        </a>
+
+        <div className="mt-10 grid gap-8 md:grid-cols-12 md:items-end">
+          <RichText text={subtitle} className="max-w-xl text-lg md:col-span-7 md:text-xl lg:col-span-6" />
+          <div className="flex flex-wrap gap-3 md:col-span-5 md:justify-end lg:col-span-6">
+            <a href={ctaHref} className="btn-light">
+              {ctaLabel}
+              <ArrowDown size={18} aria-hidden />
+            </a>
+            <a href="#contact" className="btn-ghost">
+              Booking
+              <ArrowUpRight size={18} aria-hidden />
+            </a>
+          </div>
+        </div>
       </div>
 
-      <a
-        href={ctaHref}
-        aria-label="Scroll down"
-        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-pulse-slow text-muted"
-      >
-        <ArrowDown size={22} />
-      </a>
+      <Marquee items={marquee} />
     </section>
   );
 }

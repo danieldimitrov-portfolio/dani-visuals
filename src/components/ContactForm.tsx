@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, Send } from "lucide-react";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -33,49 +33,54 @@ export default function ContactForm() {
     }
   }
 
-  const inputClass =
-    "w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 font-body text-sm text-white placeholder:text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-colors";
-
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <input name="name" required placeholder="Име" className={inputClass} maxLength={100} />
-        <input name="phone" placeholder="Телефон" className={inputClass} maxLength={30} />
+    <form onSubmit={onSubmit} className="flex flex-col gap-7">
+      <div className="grid grid-cols-1 gap-7 sm:grid-cols-2">
+        <label className="label">
+          Име
+          <input name="name" required placeholder="Твоето име" className="field mt-2 font-body normal-case tracking-normal" maxLength={100} />
+        </label>
+        <label className="label">
+          Телефон
+          <input name="phone" placeholder="+359…" className="field mt-2 font-body normal-case tracking-normal" maxLength={30} />
+        </label>
       </div>
-      <input
-        name="email"
-        type="email"
-        required
-        placeholder="Имейл"
-        className={inputClass}
-        maxLength={150}
-      />
-      <textarea
-        name="message"
-        required
-        placeholder="Съобщение"
-        rows={5}
-        className={inputClass}
-        maxLength={4000}
-      />
+      <label className="label">
+        Имейл
+        <input
+          name="email"
+          type="email"
+          required
+          placeholder="name@email.com"
+          className="field mt-2 font-body normal-case tracking-normal"
+          maxLength={150}
+        />
+      </label>
+      <label className="label">
+        Проект
+        <textarea
+          name="message"
+          required
+          placeholder="Събитие, дата, сцена, идея…"
+          rows={4}
+          className="field mt-2 resize-y font-body normal-case tracking-normal"
+          maxLength={4000}
+        />
+      </label>
 
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="btn-primary self-start disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {status === "loading" ? "Изпращане..." : "Изпрати"}
-        <Send size={16} />
+      <button type="submit" disabled={status === "loading"} className="btn-light self-start disabled:cursor-not-allowed disabled:opacity-50">
+        {status === "loading" ? "Изпращане…" : "Изпрати запитване"}
+        <Send size={17} aria-hidden />
       </button>
 
       {status === "success" && (
-        <p className="flex items-center gap-2 font-body text-sm text-emerald-400">
-          <CheckCircle2 size={16} /> Съобщението е изпратено успешно!
+        <p className="flex items-center gap-2 text-sm font-semibold text-violet-soft" role="status">
+          <CheckCircle2 size={17} /> Съобщението е изпратено успешно.
         </p>
       )}
       {status === "error" && (
-        <p className="flex items-center gap-2 font-body text-sm text-red-400">
-          <AlertCircle size={16} /> {errorMsg}
+        <p className="flex items-center gap-2 text-sm font-semibold text-violet-soft" role="alert">
+          <AlertCircle size={17} /> {errorMsg}
         </p>
       )}
     </form>

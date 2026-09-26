@@ -10,7 +10,13 @@ import type { ProjectData, SiteSettingsData, SocialLinkData } from "./types";
  *   **word** -> accent highlight   |   *word* -> bright emphasis
  */
 
-const placeholder = (seed: string) => `https://picsum.photos/seed/${seed}/1280/720`;
+// Empty demo media deliberately falls back to the site's own CSS light rigs.
+// Random stock photography made the portfolio feel generic and can be replaced
+// with real frames later from the admin panel.
+const placeholder = (seed: string) => {
+  void seed;
+  return "";
+};
 
 export const DEFAULT_SITE_SETTINGS: SiteSettingsData = {
   heroTitle: "DANI",
@@ -24,7 +30,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettingsData = {
   seoTitle: "Dani — VJ Portfolio | Визуализации за живи събития",
   seoDescription:
     "Портфолио на VJ Dani — визуализации за концерти на живо, 3D сцени и генеративни анимации за Balkan Madness x Balkan Queens и други събития.",
-  ogImageUrl: placeholder("og-cover"),
+  ogImageUrl: "/og.jpg",
 };
 
 export const DEFAULT_SOCIAL_LINKS: SocialLinkData[] = [
