@@ -43,21 +43,21 @@ npm run dev
 
 ### Данни за вход
 
-Генерирани са автоматично при първоначалната настройка:
+Задават се чрез сървърните променливи в `.env`:
 
 - **URL:** `/admin900`
 - **Потребител:** `admin`
-- **Парола:** виж стойността, която ти беше показана в чат-а (пази я на сигурно място)
+- **Парола:** стойността на `ADMIN_PASSWORD` в `.env`
 
-За да смените паролата по-късно:
+За да смените паролата, редактирайте `.env` и рестартирайте сървъра:
 
-```bash
-npm run hash-password -- "новата-парола"
+```dotenv
+ADMIN_PASSWORD="новата-парола"
 ```
 
-Командата ще изпише готов ред за `.env` (с вече ескейпнати `$` знаци — важно е да ги оставите
-точно така, иначе Next.js "изяжда" хеша, защото го бърка с променлива), както и суров хеш за
-поставяне в Vercel's environment variables (там не се налага escaping).
+Паролата се чете само на сървъра; `.env` е изключен от Git. При деплой задайте
+`ADMIN_USERNAME` и `ADMIN_PASSWORD` във Vercel и направете нов deployment.
+`ADMIN_PASSWORD_HASH` вече не се използва.
 
 ## Свързване на база данни (нужно, за да могат промените от админ панела да се запазват)
 
@@ -115,7 +115,7 @@ CONTACT_NOTIFICATION_EMAIL=your@email.com
 1. Качете проекта в GitHub (или друг git host).
 2. Импортирайте repo-то във Vercel.
 3. Добавете всички environment променливи от `.env.example` в Vercel → Settings →
-   Environment Variables (виж инструкциите по-горе за DATABASE_URL, ADMIN_PASSWORD_HASH,
+   Environment Variables (виж инструкциите по-горе за DATABASE_URL, ADMIN_USERNAME, ADMIN_PASSWORD,
    AUTH_SECRET, R2_*, NEXT_PUBLIC_SITE_URL).
 4. Деплойнете. При първи build Prisma Client се генерира автоматично (`postinstall`
    скрипт).
@@ -139,5 +139,4 @@ npm run build         # production build
 npm run db:push       # приложи Prisma схемата към базата
 npm run db:seed       # зареди демо съдържание в базата (CLI вариант на бутона в админ панела)
 npm run db:studio     # визуален браузър за базата данни (Prisma Studio)
-npm run hash-password -- "парола"   # генерира нов bcrypt хеш за админ паролата
 ```
