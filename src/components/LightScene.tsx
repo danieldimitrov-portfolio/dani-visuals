@@ -1,4 +1,6 @@
-import type { CSSProperties, ReactNode } from "react";
+"use client";
+
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 /**
  * A small stage-lighting rig drawn in CSS: moving-head beams sweeping from a
@@ -7,6 +9,11 @@ import type { CSSProperties, ReactNode } from "react";
  *
  * Deterministic per `seed`, so every project gets its own rig and the server
  * and client always agree.
+ *
+ * A page can easily carry a dozen of these at once (one per project card
+ * without real media yet). Each beam is a continuously-animated,
+ * mask+blend-mode layer, which is expensive to keep compositing on a phone
+ * GPU — so beams only animate while their rig is actually on screen.
  */
 
 type LightSceneProps = {
@@ -47,6 +54,22 @@ export default function LightScene({
   className = "",
   children,
 }: LightSceneProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [onScreen, setOnScreen] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setOnScreen(true);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => setOnScreen(entry.isIntersecting), {
+      rootMargin: "200px 0px",
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const r = random(hash(seed));
   const count = 3 + Math.floor(r() * 3); // 3–5 fixtures
 
@@ -68,7 +91,7 @@ export default function LightScene({
   });
 
   return (
-    <div aria-hidden className={`scene ${className}`} data-variant={variant}>
+    <div ref={ref} aria-hidden className={`scene ${className}`} data-variant={variant} data-animate={onScreen}>
       {children}
       {beams.map((style, i) => (
         <div key={`b${i}`} className="beam" style={style} />

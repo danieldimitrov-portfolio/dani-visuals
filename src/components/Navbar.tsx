@@ -45,15 +45,24 @@ export default function Navbar({ brand, items }: { brand: string; items: NavItem
   }, [onHome, items]);
 
   // Full-screen menu: lock page scroll and close on Escape.
+  // `overflow: hidden` alone doesn't stop background scrolling on iOS Safari
+  // (the page still rubber-bands behind the menu), so the body is pinned in
+  // place instead and the scroll position is restored on close.
   useEffect(() => {
     if (!open) return;
-    const root = document.documentElement;
-    const prev = root.style.overflow;
-    root.style.overflow = "hidden";
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const prev = { position: body.style.position, top: body.style.top, width: body.style.width };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => {
-      root.style.overflow = prev;
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.width = prev.width;
+      window.scrollTo(0, scrollY);
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);

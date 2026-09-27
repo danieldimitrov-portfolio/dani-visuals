@@ -400,7 +400,12 @@
     mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.55) 40%, transparent 78%);
     mix-blend-mode: screen;
     animation: beam-sway var(--d) ease-in-out var(--delay) infinite alternate;
+    animation-play-state: paused;
     will-change: rotate;
+  }
+  /* Only the rig(s) currently on screen actually animate — see <LightScene>. */
+  .scene[data-animate="true"] .beam {
+    animation-play-state: running;
   }
 
   .fixture {
