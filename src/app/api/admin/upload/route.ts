@@ -5,7 +5,8 @@ import { createPresignedUploadUrl, isR2Configured } from "@/lib/r2";
 
 const bodySchema = z.object({
   filename: z.string().min(1),
-  contentType: z.string().min(1),
+  // Images and videos only — never HTML/SVG/JS that could run from the public bucket.
+  contentType: z.string().regex(/^(image\/(jpeg|png|webp|avif|gif)|video\/(mp4|quicktime|webm))$/),
 });
 
 export async function POST(request: Request) {
@@ -23,13 +24,20 @@ export async function POST(request: Request) {
 
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
-    return NextResponse.json({ error: "Невалидна заявка" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Неподдържан файл. Позволени: JPG, PNG, WEBP, AVIF, GIF, MP4, MOV, WEBM." },
+      { status: 400 }
+    );
   }
 
-  const safeName = parsed.data.filename.replace(/[^a-zA-Z0-9._-]/g, "-");
-  const key = `uploads/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+  const safeName = parsed.data.filename.replace(/[^a-zA-Z0-9._-]/g, "-").slice(-80);
+  const key = `uploads/${Date.now()}-${crypto.randomUUID().slice(0, 8)}-${safeName}`;
 
-  const { uploadUrl, publicUrl } = await createPresignedUploadUrl(key, parsed.data.contentType);
-
-  return NextResponse.json({ uploadUrl, publicUrl });
+  try {
+    const { uploadUrl, publicUrl } = await createPresignedUploadUrl(key, parsed.data.contentType);
+    return NextResponse.json({ uploadUrl, publicUrl });
+  } catch (err) {
+    console.error("R2 presign error:", err);
+    return NextResponse.json({ error: "Неуспешна връзка с R2" }, { status: 500 });
+  }
 }

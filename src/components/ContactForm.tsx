@@ -1,16 +1,26 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { AlertCircle, CheckCircle2, Send } from "lucide-react";
+import Turnstile, { type TurnstileHandle } from "./Turnstile";
+
+const captchaEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
+  const turnstileRef = useRef<TurnstileHandle>(null);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (captchaEnabled && !captchaToken) {
+      setStatus("error");
+      setErrorMsg("Моля, потвърдете, че не сте робот.");
+      return;
+    }
     setStatus("loading");
     setErrorMsg("");
 
@@ -30,6 +40,9 @@ export default function ContactForm() {
     } catch (err) {
       setStatus("error");
       setErrorMsg(err instanceof Error ? err.message : "Възникна грешка");
+    } finally {
+      // Turnstile tokens are single-use.
+      turnstileRef.current?.reset();
     }
   }
 
@@ -68,7 +81,9 @@ export default function ContactForm() {
         />
       </label>
 
-      <button type="submit" disabled={status === "loading"} className="btn-light self-start disabled:cursor-not-allowed disabled:opacity-50">
+      <Turnstile ref={turnstileRef} onToken={setCaptchaToken} />
+
+      <button type="submit" disabled={status === "loading" || (captchaEnabled && !captchaToken)} className="btn-light self-start disabled:cursor-not-allowed disabled:opacity-50">
         {status === "loading" ? "Изпращане…" : "Изпрати запитване"}
         <Send size={17} aria-hidden />
       </button>

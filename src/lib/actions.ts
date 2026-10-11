@@ -210,6 +210,30 @@ export async function addMediaAction(projectId: string, formData: FormData) {
   revalidatePath("/", "layout");
 }
 
+const mediaBatchSchema = z.array(
+  z.object({ type: z.enum(["IMAGE", "VIDEO"]), url: z.string().min(1) })
+);
+
+export async function addMediaBatchAction(
+  projectId: string,
+  placement: "PREVIEW" | "GALLERY",
+  items: { type: "IMAGE" | "VIDEO"; url: string }[]
+) {
+  await requireAdmin();
+  const parsed = mediaBatchSchema.parse(items);
+  const start = await prisma.mediaItem.count({ where: { projectId, placement } });
+  await prisma.mediaItem.createMany({
+    data: parsed.map((item, i) => ({
+      ...item,
+      placement: z.enum(["PREVIEW", "GALLERY"]).parse(placement),
+      projectId,
+      order: start + i,
+    })),
+  });
+  revalidatePath(`/admin900/projects/${projectId}`);
+  revalidatePath("/", "layout");
+}
+
 export async function deleteMediaAction(id: string, projectId: string) {
   await requireAdmin();
   await prisma.mediaItem.delete({ where: { id } });

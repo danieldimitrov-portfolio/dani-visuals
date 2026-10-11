@@ -9,6 +9,7 @@ import {
 } from "@/lib/actions";
 import { inputClass, labelClass, cardClass, buttonDangerClass } from "@/lib/admin-ui";
 import ConfirmSubmitButton from "@/components/admin/ConfirmSubmitButton";
+import MediaUrlInput from "@/components/admin/MediaUrlInput";
 import { SOCIAL_ICON_MAP } from "@/lib/social-icons";
 
 export default async function SettingsPage() {
@@ -84,8 +85,8 @@ export default async function SettingsPage() {
           />
         </div>
         <div>
-          <label className={labelClass}>Open Graph снимка (URL)</label>
-          <input name="ogImageUrl" defaultValue={settings.ogImageUrl} className={inputClass} />
+          <label className={labelClass}>Open Graph снимка (1200×630, показва се при споделяне)</label>
+          <MediaUrlInput name="ogImageUrl" defaultValue={settings.ogImageUrl} accept="image/*" />
         </div>
 
         <button type="submit" className="btn-primary self-start">

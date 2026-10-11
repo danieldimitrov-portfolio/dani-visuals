@@ -11,7 +11,8 @@ import {
   deleteMediaAction,
 } from "@/lib/actions";
 import { inputClass, labelClass, cardClass, buttonDangerClass } from "@/lib/admin-ui";
-import MediaUrlInput from "@/components/admin/MediaUrlInput";
+import MediaUrlInput, { MediaThumb } from "@/components/admin/MediaUrlInput";
+import BulkMediaUpload from "@/components/admin/BulkMediaUpload";
 import ConfirmSubmitButton from "@/components/admin/ConfirmSubmitButton";
 
 export default async function EditProjectPage({
@@ -131,8 +132,8 @@ export default async function EditProjectPage({
         </div>
 
         <div>
-          <label className={labelClass}>Постер снимка (URL)</label>
-          <MediaUrlInput name="posterImageUrl" defaultValue={project.posterImageUrl} />
+          <label className={labelClass}>Постер снимка</label>
+          <MediaUrlInput name="posterImageUrl" defaultValue={project.posterImageUrl} accept="image/*" />
         </div>
 
         <div>
@@ -264,6 +265,8 @@ export default async function EditProjectPage({
         </h2>
         <MediaList items={previewMedia} projectId={project.id} />
 
+        <BulkMediaUpload projectId={project.id} placement="PREVIEW" />
+
         <form action={addMedia} className={`${cardClass} flex flex-col gap-4 border-dashed`}>
           <input type="hidden" name="placement" value="PREVIEW" />
           <AddMediaFields />
@@ -275,6 +278,8 @@ export default async function EditProjectPage({
           Медия — галерия в &quot;See more&quot; (concept art, скици, BTS)
         </h2>
         <MediaList items={galleryMedia} projectId={project.id} />
+
+        <BulkMediaUpload projectId={project.id} placement="GALLERY" />
 
         <form action={addMedia} className={`${cardClass} flex flex-col gap-4 border-dashed`}>
           <input type="hidden" name="placement" value="GALLERY" />
@@ -288,7 +293,7 @@ export default async function EditProjectPage({
 function AddMediaFields() {
   return (
     <>
-      <h3 className="font-body text-xs uppercase tracking-widest text-muted">Добави медия</h3>
+      <h3 className="font-body text-xs uppercase tracking-widest text-muted">Или добави ръчно (URL / един файл с надпис)</h3>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label className={labelClass}>Тип</label>
@@ -336,7 +341,8 @@ function MediaList({
             key={item.id}
             className={`${cardClass} flex items-center justify-between gap-4 py-3`}
           >
-            <div className="min-w-0">
+            {item.url && <MediaThumb url={item.url} />}
+            <div className="min-w-0 flex-1">
               <p className="font-body text-xs uppercase tracking-widest text-accent-bright">
                 {item.type === "VIDEO" ? "Видео" : "Снимка"} · ред {item.order}
               </p>

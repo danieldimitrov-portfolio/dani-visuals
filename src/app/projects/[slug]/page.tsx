@@ -30,13 +30,23 @@ export async function generateMetadata({
   if (!project) return {};
 
   const image = isUsableMediaUrl(project.posterImageUrl) ? project.posterImageUrl : "/og.jpg";
+  const description = stripMarkup(project.summary).slice(0, 300);
   return {
     title: project.title,
-    description: stripMarkup(project.summary),
+    description,
+    alternates: { canonical: `/projects/${project.slug}` },
     openGraph: {
+      type: "article",
+      url: `/projects/${project.slug}`,
       title: project.title,
-      description: stripMarkup(project.summary),
+      description,
       images: [{ url: image }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description,
+      images: [image],
     },
   };
 }

@@ -1,14 +1,19 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Lock } from "lucide-react";
+import Turnstile, { type TurnstileHandle } from "@/components/Turnstile";
+
+const captchaEnabled = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const turnstileRef = useRef<TurnstileHandle>(null);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -19,11 +24,13 @@ export default function AdminLoginPage() {
     const res = await signIn("credentials", {
       username: form.get("username"),
       password: form.get("password"),
+      turnstile: captchaToken,
       redirect: false,
     });
 
     setLoading(false);
     if (res?.error) {
+      turnstileRef.current?.reset();
       setError("Грешно потребителско име или парола.");
       return;
     }
@@ -57,7 +64,8 @@ export default function AdminLoginPage() {
             autoComplete="current-password"
             className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 font-body text-sm text-white placeholder:text-muted focus:border-accent focus:outline-none"
           />
-          <button type="submit" disabled={loading} className="btn-primary justify-center disabled:opacity-50">
+          <Turnstile ref={turnstileRef} onToken={setCaptchaToken} />
+          <button type="submit" disabled={loading || (captchaEnabled && !captchaToken)} className="btn-primary justify-center disabled:opacity-50">
             {loading ? "Вход..." : "Вход"}
           </button>
           {error && <p className="font-body text-sm text-red-400">{error}</p>}

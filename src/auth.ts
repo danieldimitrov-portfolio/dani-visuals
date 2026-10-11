@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { timingSafeEqual } from "node:crypto";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -9,8 +10,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         username: { label: "Потребител", type: "text" },
         password: { label: "Парола", type: "password" },
+        turnstile: { type: "hidden" },
       },
-      authorize: async (credentials) => {
+      authorize: async (credentials, request) => {
+        const ip =
+          request.headers.get("cf-connecting-ip") ??
+          request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+        if (!(await verifyTurnstile(credentials?.turnstile, ip))) return null;
+
         const username = credentials?.username;
         const password = credentials?.password;
         if (typeof username !== "string" || typeof password !== "string") return null;
