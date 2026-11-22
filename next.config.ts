@@ -10,6 +10,18 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async redirects() {
+    // The production *.vercel.app alias serves the same app, but uploads from it fail:
+    // the R2 bucket's CORS only allows the real domain. Send everyone to the canonical site.
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "dani-visuals.vercel.app" }],
+        destination: "https://www.svj-studio.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

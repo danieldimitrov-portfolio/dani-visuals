@@ -19,6 +19,9 @@ export function guessContentType(file: File) {
 
 export async function uploadToR2(file: File, onProgress?: (percent: number) => void) {
   const contentType = guessContentType(file);
+  if (/^image\/hei[cf]$/.test(contentType) || /\.hei[cf]$/i.test(file.name)) {
+    throw new Error(`${file.name}: HEIC (iPhone) не се показва в браузърите — запази снимката като JPG и опитай пак.`);
+  }
 
   const presignRes = await fetch("/api/admin/upload", {
     method: "POST",
@@ -26,7 +29,7 @@ export async function uploadToR2(file: File, onProgress?: (percent: number) => v
     body: JSON.stringify({ filename: file.name, contentType }),
   });
   const presignData = await presignRes.json().catch(() => ({}));
-  if (!presignRes.ok) throw new Error(presignData.error || "Грешка при качване");
+  if (!presignRes.ok) throw new Error(presignData.error || `Грешка при качване (${presignRes.status})`);
 
   // XHR instead of fetch so large videos can report upload progress.
   await new Promise<void>((resolve, reject) => {
@@ -40,7 +43,12 @@ export async function uploadToR2(file: File, onProgress?: (percent: number) => v
       xhr.status >= 200 && xhr.status < 300
         ? resolve()
         : reject(new Error(`Качването към R2 неуспешно (${xhr.status})`));
-    xhr.onerror = () => reject(new Error("Качването към R2 неуспешно (мрежова грешка / CORS)"));
+    xhr.onerror = () =>
+      reject(
+        new Error(
+          `Качването е блокирано (мрежа / CORS). Отвори админа през https://www.svj-studio.com, а не през ${window.location.host}.`
+        )
+      );
     xhr.send(file);
   });
 

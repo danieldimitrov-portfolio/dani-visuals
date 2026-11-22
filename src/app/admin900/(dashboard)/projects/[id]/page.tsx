@@ -12,6 +12,7 @@ import {
 } from "@/lib/actions";
 import { inputClass, labelClass, cardClass, buttonDangerClass } from "@/lib/admin-ui";
 import MediaUrlInput, { MediaThumb } from "@/components/admin/MediaUrlInput";
+import SubmitButton from "@/components/admin/SubmitButton";
 import BulkMediaUpload from "@/components/admin/BulkMediaUpload";
 import ConfirmSubmitButton from "@/components/admin/ConfirmSubmitButton";
 
@@ -146,9 +147,7 @@ export default async function EditProjectPage({
           Публикуван (видим в сайта)
         </label>
 
-        <button type="submit" className="btn-primary self-start">
-          Запази промените
-        </button>
+        <SubmitButton>Запази промените</SubmitButton>
       </form>
 
       {/* Sections */}
@@ -201,7 +200,7 @@ export default async function EditProjectPage({
                   <MediaUrlInput name="videoUrl" defaultValue={section.videoUrl} />
                 </div>
                 <div className="flex gap-3">
-                  <button type="submit" className="btn-primary">Запази</button>
+                  <SubmitButton className="btn-primary">Запази</SubmitButton>
                 </div>
               </form>
               <form action={deleteSection}>

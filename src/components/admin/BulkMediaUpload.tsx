@@ -33,8 +33,8 @@ export default function BulkMediaUpload({
         uploaded.push(
           await uploadToR2(file, (p) => setStatus(`Качване ${i + 1}/${files.length} · ${file.name} · ${p}%`))
         );
-      } catch {
-        failed.push(file.name);
+      } catch (err) {
+        failed.push(err instanceof Error ? err.message : file.name);
       }
     }
 
@@ -43,7 +43,7 @@ export default function BulkMediaUpload({
         setStatus("Запазване...");
         await addMediaBatchAction(projectId, placement, uploaded);
       }
-      if (failed.length > 0) setError(`Неуспешни: ${failed.join(", ")}`);
+      if (failed.length > 0) setError(`Неуспешни: ${failed.join(" · ")}`);
     } catch {
       setError("Файловете са качени, но не бяха запазени в базата.");
     } finally {

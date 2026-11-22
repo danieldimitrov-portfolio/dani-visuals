@@ -10,6 +10,7 @@ import {
 import { inputClass, labelClass, cardClass, buttonDangerClass } from "@/lib/admin-ui";
 import ConfirmSubmitButton from "@/components/admin/ConfirmSubmitButton";
 import MediaUrlInput from "@/components/admin/MediaUrlInput";
+import SubmitButton from "@/components/admin/SubmitButton";
 import { SOCIAL_ICON_MAP } from "@/lib/social-icons";
 
 export default async function SettingsPage() {
@@ -89,9 +90,7 @@ export default async function SettingsPage() {
           <MediaUrlInput name="ogImageUrl" defaultValue={settings.ogImageUrl} accept="image/*" />
         </div>
 
-        <button type="submit" className="btn-primary self-start">
-          Запази настройките
-        </button>
+        <SubmitButton>Запази настройките</SubmitButton>
       </form>
 
       <div className="flex flex-col gap-4">
@@ -132,9 +131,7 @@ export default async function SettingsPage() {
                   Видима
                 </label>
                 <div className="sm:col-span-2">
-                  <button type="submit" className="btn-primary">
-                    Запази
-                  </button>
+                  <SubmitButton className="btn-primary">Запази</SubmitButton>
                 </div>
               </form>
               <form action={del}>
